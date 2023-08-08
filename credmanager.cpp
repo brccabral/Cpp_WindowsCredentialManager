@@ -30,9 +30,9 @@ int main(int argc, char *argv[])
         char *password = argv[4];
 
         wchar_t *wTargetName = new wchar_t[4096];
-        MultiByteToWideChar(0, 0, argv[2], (int)strlen(argv[2]), wTargetName, (int)strlen(argv[2]));
+        MultiByteToWideChar(CP_ACP, 0, argv[2], -1, wTargetName, 4096);
         wchar_t *wUsername = new wchar_t[4096];
-        MultiByteToWideChar(0, 0, argv[3], (int)strlen(argv[3]), wUsername, (int)strlen(argv[3]));
+        MultiByteToWideChar(CP_ACP, 0, argv[3], -1, wUsername, 4096);
 
         DWORD cbCreds = (DWORD)(1 + strlen(password));
 
@@ -57,12 +57,12 @@ int main(int argc, char *argv[])
     { //--- RETRIEVE
         std::cout << "Getting" << std::endl;
         PCREDENTIALW pcred;
-        wchar_t *wString = new wchar_t[4096];
-        MultiByteToWideChar(CP_ACP, 0, argv[2], -1, wString, 4096);
-        BOOL ok = ::CredReadW(wString, CRED_TYPE_GENERIC, 0, &pcred);
+        wchar_t *wTargetName = new wchar_t[4096];
+        MultiByteToWideChar(CP_ACP, 0, argv[2], -1, wTargetName, 4096);
+        BOOL ok = ::CredReadW(wTargetName, CRED_TYPE_GENERIC, 0, &pcred);
         wprintf(L"CredRead() - errno %d\n", ok ? 0 : ::GetLastError());
 
-        delete[] wString;
+        delete[] wTargetName;
         if (!ok)
             exit(1);
         wprintf(L"Read username = '%s', password='%S' (%d bytes)\n",
